@@ -52,3 +52,6 @@ def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
 
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
     return False
+
+
+print("HOla")

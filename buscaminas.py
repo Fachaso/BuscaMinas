@@ -15,7 +15,28 @@ def existe_archivo(ruta_directorio: str, nombre_archivo:str) -> bool:
     return os.path.exists(os.path.join(ruta_directorio, nombre_archivo))
 
 def colocar_minas(filas:int, columnas: int, minas:int) -> list[list[int]]:
-    return [[]]
+#construccion de la matriz
+    matrizres: list[list[int]] = []
+    for _ in range(filas):
+        fila: list[int] = []
+        for _ in range(columnas):
+            fila.append(0)
+        matrizres.append(fila)
+#Generamos las posiciones poibles para la ubicacion de las minas
+    
+    posiciones: list[tuple[int, int]] = []
+    for i in range(filas):
+        for j in range(columnas):
+            posiciones.append((i, j))
+
+#Elegimos las posiciones aleatorias para colocar las minas en la matriz
+    posiciones_minas: list[tuple[int, int]] = random.sample(posiciones, minas)
+
+#colocar -1 en las posiciones seleccionadas para las minas
+    for (i, j) in posiciones_minas:
+    matrizres[i][j] = -1
+
+    return matrizres
 
 
 def calcular_numeros(tablero: list[list[int]]) -> None:

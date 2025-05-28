@@ -14,6 +14,7 @@ def calcular_numeros(tablero):
     # Los -1 quedan igual automáticamente
 
 # Ejemplo
+"""
 tablero = [
     [-1, -1, 0],
     [0,  0, 0],
@@ -24,4 +25,5 @@ calcular_numeros(tablero)
 
 for fila in tablero:
     print(fila)
+"""
 #fin del ejemplo

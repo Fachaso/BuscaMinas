@@ -37,7 +37,15 @@ def colocar_minas(filas:int, columnas: int, minas:int) -> list[list[int]]:
     matrizres[i][j] = -1
 
     return matrizres
-
+    
+def es_matriz(t: list[list]) -> bool:
+    if len(t) == 0 or len(t[0]) == 0:
+        return False
+    cantidad_columnas: int = len(t[0])
+    for fila in t:
+        if len(fila) != cantidad_columnas:
+            return False
+    return True
 
 def calcular_numeros(tablero: list[list[int]]) -> None:
     return

@@ -1,10 +1,10 @@
 #Ejercicio 2:
-def calcular_numeros(tablero):
+def calcular_numeros(tablero: list[list[int]]) -> None:
     for i in range(len(tablero)):
         for j in range(len(tablero[0])):
             if tablero[i][j] == 0:
                 # Contar cuántos -1 hay alrededor
-                minas_cerca = 0
+                minas_cerca:int = 0
                 for x in range(i - 1, i + 2):
                     for y in range(j - 1, j + 2):
                         if 0 <= x < len(tablero) and 0 <= y < len(tablero[0]):

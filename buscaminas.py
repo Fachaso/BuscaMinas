@@ -48,7 +48,36 @@ def es_matriz(t: list[list]) -> bool:
     return True
 
 def calcular_numeros(tablero: list[list[int]]) -> None:
-    return
+     #Vamos a medir las dimensiones del tablero
+    cantidad_filas: int = len(tablero)
+    cantidad_columnas: int = len(tablero[0])
+
+# Creamos una copia del tablero original SOLO para leerlo mientras modiescribimos en el Original
+    copia_tablero_original: list[list[int]] = []
+    for fila_actual in tablero:
+        copia_fila: list[int] = fila_actual.copy()
+        copia_tablero_original.append(copia_fila)
+
+# Lista de tuplas para recorrer las 8 direcciones posibles que rodean a una mina
+    posiciones_vecinas: list[tuple[int, int]] = [
+        (-1, -1), (-1, 0), (-1, 1),
+        ( 0, -1),          ( 0, 1),
+        ( 1, -1), ( 1, 0), ( 1, 1)
+    ]
+
+# Recorremos cada celda y contamos las minas vecinas
+
+    for fila: int in range(cantidad_filas):
+        for columna: int in range(cantidad_columnas):
+            if copia_tablero_original[fila][columna] != -1:
+                minas_adyacentes: int = 0
+                for desplazamiento_fila, desplazamiento_columna in posiciones_vecinas:
+                    fila_vecina: int = fila + desplazamiento_fila
+                    columna_vecina: int = columna + desplazamiento_columna
+                    if 0 <= fila_vecina < cantidad_filas and 0 <= columna_vecina < cantidad_columnas:
+                        if copia_tablero_original[fila_vecina][columna_vecina] == -1:
+                            minas_adyacentes += 1
+                tablero[fila][columna] = minas_adyacentes
 
 
 def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:

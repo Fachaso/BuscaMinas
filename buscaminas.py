@@ -81,7 +81,35 @@ def calcular_numeros(tablero: list[list[int]]) -> None:
 
 
 def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
-    return {}
+    # Creamos el tablero con colocar_minas y lo guardamos en una variable
+    tablero_con_minas: list[list[int]] = colocar_minas(filas, columnas, minas)
+    
+    #Completamos el tablero con numeros alrededor de las minas usando calcular_numeros()
+    calcular_numeros(tablero_con_minas)
+
+#HASTA ACA ya tenemos listo el tablero para incluirlo en el EstadoJuego
+
+# Creamos tablero_visible , que es lo que ve el jugador al inicio, donde todo esta oculto. 
+    tablero_visible: list[list[str]] = []
+    for _ in range(filas):
+        fila_visible: list[str] = []
+        for _ in range(columnas):
+            fila_visible.append(VACIO)
+        tablero_visible.append(fila_visible)
+
+# crear el diccionario estado con todas las claves
+# {CLAVE,VALOR ESPERADO}
+
+    estado: EstadoJuego = {
+        "tablero": tablero_con_minas,
+        "tablero_visible": tablero_visible,
+        "filas": filas,
+        "columnas": columnas,
+        "minas": minas,
+        "juego_terminado": False
+    }
+
+    return estado
 
 
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:

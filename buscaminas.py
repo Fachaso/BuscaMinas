@@ -222,7 +222,21 @@ def estructura_y_tipos_validos(estado: EstadoJuego) -> bool:
 
     return True
 
-
+#Creamos la funcion son_matriz_y_misma_dimension
+# Chequeamos que 2 matrices t1 y t2 tengan , la misma forma, misma cantidad de filas y la misma cantidad de columnas en todas sus dilas
+# Utilizamos es_matriz del ejercicio 1
+def son_matriz_y_misma_dimension(t1: list[list[Any]], t2: list[list[Any]]) -> bool:
+    if not es_matriz(t1):
+        return False
+    if not es_matriz(t2):
+        return False
+    if len(t1) != len(t2):
+        return False
+    if len(t1) == 0:
+        return True
+    if len(t1[0]) != len(t2[0]):
+        return False
+    return True
 
 
 

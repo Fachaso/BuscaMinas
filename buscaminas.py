@@ -166,7 +166,61 @@ def estado_valido(estado: EstadoJuego) -> bool:
 
     return True
 
+def estructura_y_tipos_validos(estado: EstadoJuego) -> bool:
+    # Verificar que existan exactamente las 6 claves esperadas
+    claves_esperadas: list[str] = ["tablero", "tablero_visible", "filas", "columnas", "minas", "juego_terminado"]
+    for clave in claves_esperadas:
+        if clave not in estado:
+            return False
+    if len(estado) != 6:
+        return False
 
+    # Verificar que filas, columnas y minas son enteros positivos y coherentes
+    filas: int = estado["filas"]
+    columnas: int = estado["columnas"]
+    minas: int = estado["minas"]
+
+    if filas <= 0 or filas // 1 != filas:
+        return False
+    if columnas <= 0 or columnas // 1 != columnas:
+        return False
+    if minas <= 0 or minas >= filas * columnas or minas // 1 != minas:
+        return False
+
+    # Verificar que juego_terminado sea un booleano (se rompe si usamos True==1 o False == 0)
+    juego_terminado: Any = estado["juego_terminado"]
+    if not (juego_terminado == True or juego_terminado == False):
+        return False
+
+    # Validar que tablero y tablero_visible son matrices válidas y con misma dimensión
+    tablero: list[list[int]] = estado["tablero"]
+    tablero_visible: list[list[str]] = estado["tablero_visible"]
+
+    if not es_matriz(tablero):
+        return False
+    if not es_matriz(tablero_visible):
+        return False
+    if not son_matriz_y_misma_dimension(tablero, tablero_visible):
+        return False
+
+    # Validar que los valores del tablero estén entre -1 y 8
+    for fila in tablero:
+        for valor in fila:
+            if valor < -1 or valor > 8:
+                return False
+
+    # Validar los valores del tablero_visible
+    valores_validos: list[str] = [VACIO, BANDERA, BOMBA, "0", "1", "2", "3", "4", "5", "6", "7", "8"]
+    for fila_visible in tablero_visible:
+        for valor_visible in fila_visible:
+            esta: bool = False
+            for permitido in valores_validos:
+                if valor_visible == permitido:
+                    esta = True
+            if not esta:
+                return False
+
+    return True
 
 
 

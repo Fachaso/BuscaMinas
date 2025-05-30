@@ -238,7 +238,30 @@ def son_matriz_y_misma_dimension(t1: list[list[Any]], t2: list[list[Any]]) -> bo
         return False
     return True
 
+def todas_celdas_seguras_descubiertas(tablero: list[list[int]], tablero_visible: list[list[str]]) -> bool:
+   
+   #Confirmamos que ambas matrices tienen la misma forma
+    if not son_matriz_y_misma_dimension(tablero, tablero_visible):
+        return False
 
+    # Obtenemos la cantidad de filas y columnas , para calcular el tamaño de la matriz
+    filas: int = len(tablero)
+    columnas: int = len(tablero[0])
+
+    # Recorremos todas las posiciones validas del tablero
+    # Analizamos cada celda, si la celda del tablero no es una mina entonces:
+    # tiene que estar descubierta en el tablero_visible con el numero correcto
+
+    for i in range(filas):
+        for j in range(columnas):
+            valor_tablero: int = tablero[i][j]
+            valor_visible: str = tablero_visible[i][j]
+
+            if valor_tablero != -1:
+                if not (valor_visible == str(valor_tablero)): #Tiene que coincidir para que este descubierta correctamente sino retorna False
+                    return False
+
+    return True
 
 
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:

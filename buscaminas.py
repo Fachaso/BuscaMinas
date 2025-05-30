@@ -112,6 +112,67 @@ def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
     return estado
 
 
+def estado_valido(estado: EstadoJuego) -> bool:
+    if not estructura_y_tipos_validos(estado):
+        return False
+# Estrucutura y y tipos
+    tablero: list[list[int]] = estado["tablero"]
+    tablero_visible: list[list[str]] = estado["tablero_visible"]
+    filas: int = estado["filas"]
+    columnas: int = estado["columnas"]
+    minas: int = estado["minas"]
+    juego_terminado: bool = estado["juego_terminado"]
+
+    # verificar cantidad de minas
+    cantidad: int = 0
+    for fila in tablero:
+        for celda in fila:
+            if celda == -1:
+                cantidad += 1
+    if cantidad != minas:
+        return False
+
+    # verificar si tablero está bien numerado
+    copia_tablero: list[list[int]] = []
+    for fila in tablero:
+        copia_tablero.append(fila.copy())
+    calcular_numeros(copia_tablero)
+    if copia_tablero != tablero:
+        return False
+
+    # juego terminado válido
+    hay_bomba_visible: bool = False
+    for i in range(filas):
+        for j in range(columnas):
+            if tablero_visible[i][j] == BOMBA:
+                hay_bomba_visible = True
+    todas_seguras_descubiertas: bool = todas_celdas_seguras_descubiertas(tablero, tablero_visible)
+    if juego_terminado != (todas_seguras_descubiertas or hay_bomba_visible):
+        return False
+
+    # banderas solo sobre minas
+    for i in range(filas):
+        for j in range(columnas):
+            if tablero_visible[i][j] == BANDERA and tablero[i][j] != -1:
+                return False
+
+    # los números visibles deben coincidir con el tablero
+    for i in range(filas):
+        for j in range(columnas):
+            visible: str = tablero_visible[i][j]
+            if visible != VACIO and visible != BANDERA and visible != BOMBA:
+                if visible != str(tablero[i][j]):
+                    return False
+
+    return True
+
+
+
+
+
+
+
+
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
     return [[]]
 

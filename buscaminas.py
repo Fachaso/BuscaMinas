@@ -265,7 +265,14 @@ def todas_celdas_seguras_descubiertas(tablero: list[list[int]], tablero_visible:
 
 
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
-    return [[]]
+    tablero_visible: list[list[str]] = estado["tablero_visible"]
+    copia: list[list[str]] = []
+
+    for fila in tablero_visible:
+        fila_copia: list[str] = fila.copy()
+        copia.append(fila_copia)
+
+    return copia
 
 
 def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:

@@ -298,7 +298,26 @@ def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 
 
 def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
-    return
+    # Si el juego terminó, no se hace nada
+    if estado["juego_terminado"]:
+        return
+
+    # Si hay una mina, se muestra la bomba y se termina el juego
+    if estado["tablero"][fila][columna] == -1:
+        estado["tablero_visible"][fila][columna] = BOMBA
+        estado["juego_terminado"] = True
+        return
+
+    # Si no hay una mina, se deben descubrir los caminos seguros
+    caminos: list[list[tuple[int, int]]] = caminos_descubiertos(
+        estado["tablero"], estado["tablero_visible"], fila, columna
+    )
+
+    for camino in caminos:
+        for fila_camino, columna_camino in camino:
+            if estado["tablero_visible"][fila_camino][columna_camino] != BANDERA:
+                numero: int = estado["tablero"][fila_camino][columna_camino]
+                estado["tablero_visible"][fila_camino][columna_camino] = str(numero)
 
 
 def verificar_victoria(estado: EstadoJuego) -> bool:

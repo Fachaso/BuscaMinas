@@ -385,8 +385,23 @@ def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[st
 
     return caminos
 
+#El resultado de la función es True si y solo si TODAS las celdas sin minas han #sido descubiertas correctamente.
+
+#O sea ganamos si todas las celdas que no tienen minas están visibles con su #numero correcto . 
+	#-Verificamos para cada celda(i, j) si en el tablero hay un numero (0a8)
+	#-no puede haber VACIO, BANDERA, ni errores en celdas seguras.
+    #Ejemplo con Victoria
+#    tablero = [
+#  [-1, 1],
+#  [ 1, 1]
+#]
+
+#tablero_visible = [
+#  [" ", "1"],
+#  ["1", "1"]
+#]
 def verificar_victoria(estado: EstadoJuego) -> bool:
-    return True
+    return todas_celdas_seguras_descubiertas(estado["tablero"], estado["tablero_visible"])
 
 
 def reiniciar_juego(estado: EstadoJuego) -> None:

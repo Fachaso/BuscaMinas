@@ -320,6 +320,71 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
                 estado["tablero_visible"][fila_camino][columna_camino] = str(numero)
 
 
+def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int) -> list[list[tuple[int, int]]]:
+    
+    #Creamos la lista de caminos y guardamos las dimensiones
+    caminos: list[list[tuple[int, int]]] = []
+
+    cantidad_filas: int = len(tablero)
+    cantidad_columnas: int = len(tablero[0])
+
+    #Si se hace clic en una celda que no es 0, se devuelve solo esa celda como unico camino.
+    #Ejemplo si el jugador hace click en una celda que tiene un numero mayor a 0, por ejemplo 2, NO hay expansion
+        #en ese caso solo se muestra esa celda, no hay celdas vecinas para descubrir automaticamente
+    if tablero[f][c] > 0:
+        return [[(f, c)]] #por eso delvovemos una lista que contiene un solo camino con una unica posicion
+
+    #Creamos variables auxiliares para no repetir celdas, y con frontera  hcemos una lista  de celdas a procesar
+    #frontera son celdas que estan al borde de ser exploradas.
+     
+    posiciones_visitadas: list[tuple[int, int]] = []
+    frontera: list[tuple[int, int]] = [(f, c)] # Comenzamos la expansion desde esta celda
+
+    #Las 8 direcciones posibles alrededor de cada celda
+    #Sirve para poder recorrer alrededor de una celda y chequear cada vecino que se puede descubrir
+    posiciones_vecinas: list[tuple[int, int]] = [
+        (-1, -1), (-1, 0), (-1, 1),
+        ( 0, -1),          ( 0, 1),
+        ( 1, -1), ( 1, 0), ( 1, 1)
+    ]
+
+    # Mientras haya posisciones por explorar, seguimos descubriendo/expandiendo
+    #Vamos a explorar en cada vuelta a los vecinos, y luego a los vecinos de los vecinos y asi sucesivamente ...
+    while len(frontera) > 0:
+        actual: tuple[int, int] = frontera.pop()
+        fila_actual: int = actual[0]
+        columna_actual: int = actual[1]
+
+    # No repetimos ni pisamos banderas, continuamos al siguiente ciclo del while si se cumple:
+    # pasamos directamente a la siguiente en frontera
+        if actual in posiciones_visitadas:
+            continue
+
+        if tablero_visible[fila_actual][columna_actual] == BANDERA:
+            continue
+
+        # Agregar la celda actual  al camino
+        camino_actual: list[tuple[int, int]] = [(fila_actual, columna_actual)]
+        posiciones_visitadas.append(actual)
+
+        #Si tiene valor 0 la celda descubierta, agregamos sus vecinos seguros a la frontera para seguir expandiendo
+
+        if tablero[fila_actual][columna_actual] == 0:
+            for desplazamiento_fila, desplazamiento_columna in posiciones_vecinas:
+                fila_vecina: int = fila_actual + desplazamiento_fila
+                columna_vecina: int = columna_actual + desplazamiento_columna
+
+                if 0 <= fila_vecina < cantidad_filas and 0 <= columna_vecina < cantidad_columnas:
+                    if (fila_vecina, columna_vecina) not in posiciones_visitadas and (fila_vecina, columna_vecina) not in frontera:
+                        if tablero[fila_vecina][columna_vecina] != -1:
+                            frontera.append((fila_vecina, columna_vecina))
+
+        #Agregamos camino a la lista de caminos, o sea que cada celda que recorrimos forma parte de su propio camino
+        # que va a ser procesado por descubrir_celda
+        caminos.append(camino_actual)
+
+    return caminos
+
 def verificar_victoria(estado: EstadoJuego) -> bool:
     return True
 

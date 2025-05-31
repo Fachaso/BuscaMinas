@@ -276,7 +276,25 @@ def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
 
 
 def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
-    return
+    # No hacemos nada si el juego terminó o la celda ya está descubierta
+    #Si el juergo ya termino o la celda ya esta descubierta(no es ni VACIO ni BANDERA) entonces no se modifica el tablero visible.
+	        #-Si el juego termino no se puede modificar mas el tablero
+	        #-Si la celda ya fue descubierta no la podemos marcar***
+    
+    if estado["juego_terminado"]:
+        return
+
+    celda_visible: str = estado["tablero_visible"][fila][columna]
+
+    if celda_visible != VACIO and celda_visible != BANDERA:
+        return
+
+    # Si está VACIO, colocamos una bandera
+    if celda_visible == VACIO:
+        estado["tablero_visible"][fila][columna] = BANDERA
+    else:
+        # Si tenia BANDERA, la desmarcamos (volvemos a VACIO)
+        estado["tablero_visible"][fila][columna] = VACIO
 
 
 def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:

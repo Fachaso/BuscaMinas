@@ -432,7 +432,66 @@ def reiniciar_juego(estado: EstadoJuego) -> None:
 
 
 def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
-    return
+    if estado["juego_terminado"]:
+        return
+
+    if not estado_valido(estado):
+        return
+
+    ruta_tablero: str = os.path.join(ruta_directorio, "tablero.txt")
+    ruta_tablero_visible: str = os.path.join(ruta_directorio, "tablero_visible.txt")
+
+# Generamos el contenido de tablero.txt
+    contenido_tablero: list[str] = []
+
+    for fila in estado["tablero"]:
+        fila_str: str = ""
+        for i in range(len(fila)):
+            #Convertimos el entero en string y lo agregamos.
+            fila_str += str(fila[i])
+           #Agregamos un ; solo entre elementos, no al final de la fila.
+            if i != len(fila) - 1:
+                fila_str += ";"
+        #Agregamos la fila terminada a la lista.
+        contenido_tablero.append(fila_str)
+
+# Construimos una lista de strings donde cada uno es una linea del archivo tablero_visible.txt
+    contenido_visible: list[str] = []
+
+# Recorremos cada fila del tablero que es una matriz de strings
+# Transformamos la BANDERA en * el espacio VACIO en ? y si es un numero queda igual
+# Agregamos ; solo entre valores, no al final.
+    for fila in estado["tablero_visible"]:
+        fila_str: str = ""
+        for i in range(len(fila)):
+            celda: str = fila[i]
+            if celda == BANDERA:
+                fila_str += "*"
+            elif celda == VACIO:
+                fila_str += "?"
+            else:
+                fila_str += celda
+            if i != len(fila) - 1:
+                fila_str += ";"
+        contenido_visible.append(fila_str)
+
+#Une correctamente la ruta del directorio con el nombre del archivo tablero.txt.
+#Por ejemplo: si ruta_directorio = "./tppython", esto da ./tppython/tablero.txt.
+
+    archivo_tablero: str = os.path.join(ruta_directorio, "tablero.txt")
+    archivo_visible: str = os.path.join(ruta_directorio, "tablero_visible.txt")
+
+# Abrimos el archivo para escritura y si no existe lo crea, agregamos salto de linea \n y cerramos los archivos 
+    archivo1 = open(archivo_tablero, "w")
+    for linea in contenido_tablero:
+        archivo1.write(linea + "\n")
+    archivo1.close()
+
+# Abrimos el archivo, escribimos cada linea del archivo ya trasnformado y cerramos el archivo
+    archivo2 = open(archivo_visible, "w")
+    for linea in contenido_visible:
+        archivo2.write(linea + "\n")
+    archivo2.close()
 
 
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:

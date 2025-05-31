@@ -405,7 +405,30 @@ def verificar_victoria(estado: EstadoJuego) -> bool:
 
 
 def reiniciar_juego(estado: EstadoJuego) -> None:
-    return
+    
+    # Vamos a recuperar los datos del estado manteniendo las dimensiones y cantidad de minas originales
+    filas: int = estado["filas"]
+    columnas: int = estado["columnas"]
+    minas: int = estado["minas"]
+
+
+    #Generamos un nuevo tablero con minas , agregando -1 donde hay minas y numeros del 0-8 en el resto.
+    nuevo_tablero: list[list[int]] = colocar_minas(filas, columnas, minas)
+    calcular_numeros(nuevo_tablero)
+
+    # Generamos un tablero_visible VACIO, o sea lo llenamos con " " para que el jugador no vea nada aun 
+    nuevo_tablero_visible: list[list[str]] = []
+    for _ in range(filas):
+        fila_visible: list[str] = []
+        for _ in range(columnas):
+            fila_visible.append(VACIO)
+        nuevo_tablero_visible.append(fila_visible)
+
+    #Asignamos nuevo estado, donde se actualiza todo el estado , menos las dimensiones y las minas
+
+    estado["tablero"] = nuevo_tablero
+    estado["tablero_visible"] = nuevo_tablero_visible
+    estado["juego_terminado"] = False
 
 
 def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:

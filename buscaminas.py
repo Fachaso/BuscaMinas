@@ -495,4 +495,178 @@ def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
 
 
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
-    return False
+    #Verificamos la existencia de los archivos tablero.txt y tablero_visible.txt
+    def cargar_estado(estado: dict, ruta_directorio: str) -> bool:
+        if not existe_archivo(ruta_directorio, "tablero.txt"):
+            return False
+        if not existe_archivo(ruta_directorio, "tablero_visible.txt"):
+            return False
+#Leemos archivo tablero.txt y preparamos las variables
+#para construir la ruta completa al archivo tablero.txt
+#   -Abrimos el archivo , leemos todas sus lineas y las guardamos en lineas_tablero.
+#   - Luego inicializamos todas las variables
+        ruta_tablero = os.path.join(ruta_directorio, "tablero.txt")
+        ruta_visible = os.path.join(ruta_directorio, "tablero_visible.txt")
+
+        archivo_tablero = open(ruta_tablero, "r")
+        lineas_tablero = archivo_tablero.readlines()
+        archivo_tablero.close()
+
+        tablero: list = []
+        cantidad_minas: int = 0
+        cantidad_filas: int = 0
+        cantidad_columnas: int = -1
+
+#    Procesamos cada linea del archivo tablero.txt
+#    recorremos cada linea del archivo, si la linea tiene 1 o menos caracteres(por ejemplo, solo un \n) la salta, en resumen evitamos contar lineas vacias como filas del tablero.
+        
+        for linea_tablero in lineas_tablero:
+            if len(linea_tablero) <= 1:
+                continue
+
+#convertimos la linea en numeros 
+#recorremos la linea caracter por caracter, y armamos cada numero en numero_actual  y cada vez que aparece una (,) lo convertimos a entero y lo agregamos a la lista fila_numeros.
+#           -Tambien contamos cuantas comas hay en esa linea
+#           - y agregamos el ultimo numero que estaba en construccion
+            fila_numeros: list = []
+            numero_actual: str = ""
+            cantidad_comas_en_fila: int = 0
+            posicion = 0
+            while posicion < len(linea_tablero):
+                caracter = linea_tablero[posicion]
+                if caracter == ",":
+                    if numero_actual == "":
+                        return False
+                    fila_numeros.append(int(numero_actual))
+                    numero_actual = ""
+                    cantidad_comas_en_fila += 1
+                elif caracter != "\n":
+                    numero_actual += caracter
+                posicion += 1
+            if numero_actual != "":
+                fila_numeros.append(int(numero_actual))
+
+#Validamos las columnas y los valores numericos
+#   Vamos a validar que estamos leyendo, como todavia no sabemos cuantas columnas tiene el tablero, por eso si la cantidad_columnas == -1, la calculamos como cantidad_columnas = cantidad_comas_en_fila + 1
+#           con esto determinamos cuantas columnas va a tener todo el tablero.
+#           Despues en todas las siguientes lineas , verificamos que tengan exactamente esa cantidad de columnas.
+            
+            if cantidad_columnas == -1:
+                cantidad_columnas = cantidad_comas_en_fila + 1
+            if cantidad_comas_en_fila != cantidad_columnas - 1:
+                return False
+
+#Validamos que todos los numeros esten entre -1 y 8 y contamos las minas
+#Aca recorremos todos los valores numericos de esa fila (fila_numeros).
+#Verificamos que cada valor este dentro del rango permitido:
+#-PERMITIDO: -1 (mina), 0a8(cantidad de minas vecinas)
+#-Sino devolvemos false
+#-Si encuentra un -1 , suma 1 a la cantidad total de minas.
+
+            indice = 0
+            while indice < len(fila_numeros):
+                valor_celda = fila_numeros[indice]
+                if valor_celda < -1 or valor_celda > 8:
+                    return False
+                if valor_celda == -1:
+                    cantidad_minas += 1
+                indice += 1
+
+#Agregamos la fila al tablero y aumentamos el contador de filas
+#-agregamos la fila completa como una lista a la matriz tablero y aumentamos 1 el numero total de filas leidas.
+            tablero.append(fila_numeros)
+            cantidad_filas += 1
+
+#Validacion general
+#Sino se encontro ninguna fila valida o nunca se pudo contar/determinar la cantidad de columnas, el archivo no sirve y devuelve False.
+
+        if cantidad_filas == 0 or cantidad_columnas == -1:
+            return False
+
+#Procesamos Tablero_visible.txt
+#-Leemos todas las lineas del archivo y validamos la cantidad de filas y que tenga la misma cantidad de filas que tablero.txt
+
+        archivo_visible = open(ruta_visible, "r")
+        lineas_visible = archivo_visible.readlines()
+        archivo_visible.close()
+
+        if len(lineas_visible) != cantidad_filas:
+            return False
+
+
+#procesamos cada linea del archivo tablero_visible.txt
+#-Recorremos caracter por caracter  y armamos cada simbolo (como "?", "1", "*") y lo guardamos en la fila visible.
+#-Contamos las comas (,) para verificar la cantidad de columnas.
+#y agregamos el ultimo valor que estaba en construccion.
+
+        tablero_visible: list = []
+        fila_index = 0
+        while fila_index < cantidad_filas:
+            linea_visible = lineas_visible[fila_index]
+            fila_visible: list = []
+            caracter_actual: str = ""
+            cantidad_comas_en_visible = 0
+            col_index = 0
+            while col_index < len(linea_visible):
+                caracter = linea_visible[col_index]
+                if caracter == ",":
+                    fila_visible.append(caracter_actual)
+                    caracter_actual = ""
+                    cantidad_comas_en_visible += 1
+                elif caracter != "\n":
+                    caracter_actual += caracter
+                col_index += 1
+            if caracter_actual != "":
+                fila_visible.append(caracter_actual)
+
+
+#Validamos la cantidad de columnas
+#Nos aseguramos que cada fila en tablero_visible.txt tenga la misma cantidad de columnas que tablero.txt
+
+            
+            if len(fila_visible) != cantidad_columnas:
+                return False
+
+#VAlidamos caracteres y lo traducimos a valores internos.
+#            -recorremos cada celda y validamos que contenga un simbolo permitido: (0a8, ? ,*...etc ) si hay otra cosa devuleve False.
+#            -reemplaza * por BANDERA
+#           -Reemplaza ? por VACIO
+#           -Los numeros se dejan como estan en string
+
+            
+            indice_celda = 0
+            while indice_celda < cantidad_columnas:
+                simbolo = fila_visible[indice_celda]
+                if simbolo not in ['*', '?', '.', '0', '1', '2', '3', '4', '5', '6', '7', '8']:
+                    return False
+                if simbolo == '*':
+                    fila_visible[indice_celda] = "BANDERA"
+                elif simbolo == '?':
+                    fila_visible[indice_celda] = "VACIO"
+                indice_celda += 1
+
+
+#Agregamos la fila al tablero_visible
+#La fila que ya esta procesada y traducida a la matriz tablero_visible
+
+            tablero_visible.append(fila_visible)
+            fila_index += 1
+
+#Actualizamos el estado y devolvemos True
+#Aca actualizamos el diccionario estado con todos los datos que se obtuvieron:
+#-filas : es la cantidad de filas validas en tablero.txt
+#-columnas: es la cantidad de columnas de la primera linea
+#-minas: Total de -1 encontradas en tablero.txt
+#-tablero: la matriz de enteros (con minas y numeros)
+#-tablero_visible: las matriz de strings(visibles para el jugador)
+#-Juego terminado: empieza con False poruqe al cargar un estado el juego no esta finalizado todavia.
+
+
+        estado['filas'] = cantidad_filas
+        estado['columnas'] = cantidad_columnas
+        estado['minas'] = cantidad_minas
+        estado['tablero'] = tablero
+        estado['tablero_visible'] = tablero_visible
+        estado['juego_terminado'] = False
+#Si todo se proceso correctamente
+        return True

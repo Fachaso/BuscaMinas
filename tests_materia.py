@@ -1,6 +1,9 @@
 import unittest
-from buscaminas import (crear_juego, descubrir_celda, marcar_celda, obtener_estado_tablero_visible,
-                               reiniciar_juego, colocar_minas, calcular_numeros, verificar_victoria, guardar_estado, cargar_estado, BOMBA, BANDERA, VACIO, EstadoJuego)
+import os
+from buscaminas3 import (crear_juego, descubrir_celda, marcar_celda, obtener_estado_tablero_visible,
+                               reiniciar_juego, colocar_minas, calcular_numeros, verificar_victoria, 
+                               guardar_estado, cargar_estado, BOMBA, BANDERA, VACIO, EstadoJuego,
+                               es_matriz,estado_valido,son_matriz_y_misma_dimension,estructura_y_tipos_validos)
 
 
 '''
@@ -11,6 +14,7 @@ Ayudamemoria: entre los métodos para testear están los siguientes:
     self.assertFalse(x)    -> testea que x sea False
     self.assertIn(a, b)    -> testea que a esté en b (siendo b una lista o tupla)
 '''
+# Función auxiliar para contar minas (-1)
 def cant_minas_en_tablero(tablero: list[list[int]]) -> int:
     """Chequea que el número de minas en el tablero sea igual al número de minas esperado"""
     contador_minas:int = 0
@@ -20,6 +24,7 @@ def cant_minas_en_tablero(tablero: list[list[int]]) -> int:
                 contador_minas += 1
     return contador_minas
 
+# Función auxiliar para verificar que solo hay 0 y -1
 def son_solo_ceros_y_bombas (tablero: list[list[int]]) -> bool:
     for fila in tablero:
         for celda in fila:
@@ -27,6 +32,7 @@ def son_solo_ceros_y_bombas (tablero: list[list[int]]) -> bool:
                 return False
     return True
 
+# Función auxiliar para verificar dimensiones correctas
 def dimension_correcta(tablero: list[list[int]], filas: int, columnas: int) -> bool:
     """Chequea que el tablero tenga las dimensiones correctas"""
     if len(tablero) != filas:
@@ -37,7 +43,7 @@ def dimension_correcta(tablero: list[list[int]], filas: int, columnas: int) -> b
     return True
 
 
-
+# Test para colocar_minas
 class colocar_minasTest(unittest.TestCase):
     def test_ejemplo(self):
         filas = 2
@@ -51,8 +57,18 @@ class colocar_minasTest(unittest.TestCase):
         self.assertEqual(cant_minas_en_tablero(tablero), minas)
         
 
+# Test para es_matriz
+class TestEsMatriz(unittest.TestCase):
+    def test_valido(self):
+        self.assertTrue(es_matriz([[1, 2], [3, 4]]))
 
+    def test_vacio(self):
+        self.assertFalse(es_matriz([]))
 
+    def test_filas_diferentes(self):
+        self.assertFalse(es_matriz([[1, 2], [3]]))
+
+# Test para calcular_numeros
 class calcular_numerosTest(unittest.TestCase):
     def test_ejemplo(self):
         tablero = [[0,-1],
@@ -63,6 +79,7 @@ class calcular_numerosTest(unittest.TestCase):
         self.assertEqual(tablero, [[1,-1],
                                    [1, 1]])
 
+# Test para crear_juego y validaciones
 class crear_juegoTest(unittest.TestCase):
     def test_ejemplo(self):
         filas = 2
@@ -84,8 +101,28 @@ class crear_juegoTest(unittest.TestCase):
         self.assertFalse(estado['juego_terminado'])
         # Testeamos que haya una mina en el tablero
         self.assertEqual(cant_minas_en_tablero(estado['tablero']), minas)
-    
 
+# Test para estado_valido
+class TestEstadoValido(unittest.TestCase):
+    def test_valido(self):
+        estado: EstadoJuego = crear_juego(2, 2, 1)
+        self.assertTrue(estado_valido(estado))
+
+# Test para estructura_y_tipos_validos
+class TestEstructuraYTipos(unittest.TestCase):
+    def test_faltan_claves(self):
+        estado_mal: EstadoJuego = {'filas': 2}
+        self.assertFalse(estructura_y_tipos_validos(estado_mal))
+
+# Test para son_matriz_y_misma_dimension
+class TestMismaDimension(unittest.TestCase):
+    def test_correcta(self):
+        self.assertTrue(son_matriz_y_misma_dimension([[1,2]], [["a","b"]]))
+
+    def test_distinta(self):
+        self.assertFalse(son_matriz_y_misma_dimension([[1,2]], [["a"]]))
+
+# Test para marcar_celda
 class marcar_celdaTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -121,7 +158,7 @@ class marcar_celdaTest(unittest.TestCase):
         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 1)
 
 
-
+# Test para descubrir_celda
 class descubrir_celdaTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -160,7 +197,21 @@ class descubrir_celdaTest(unittest.TestCase):
         self.assertEqual(cant_minas_en_tablero(estado['tablero']), 3)
         self.assertFalse(estado['juego_terminado'])
 
+    #mirar si hace falta implementarlo
+    """def test_descubrir_bomba(self):
+        estado: EstadoJuego = {
+            'filas': 2,
+            'columnas': 2,
+            'minas': 1,
+            'tablero': [[-1, 1], [1, 1]],
+            'tablero_visible': [[VACIO, VACIO], [VACIO, VACIO]],
+            'juego_terminado': False
+        }
+        descubrir_celda(estado, 0, 0)
+        self.assertEqual(estado['tablero_visible'][0][0], BOMBA)
+        self.assertTrue(estado['juego_terminado'])"""
 
+# Test para verificar_victoria
 class verificar_victoriaTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -230,7 +281,7 @@ class obtener_estado_tableroTest(unittest.TestCase):
         ])
         self.assertFalse(estado['juego_terminado'])
 
-
+# Test para reiniciar_juego
 class reiniciar_juegoTest(unittest.TestCase):
     def test_ejemplo(self):
         estado: EstadoJuego = {
@@ -269,13 +320,64 @@ class reiniciar_juegoTest(unittest.TestCase):
 
 # Tarea: Pensar cómo testear  guardar_estado y cargar_estado
 
+# Test para guardar_estado
 class guardar_estadoTest(unittest.TestCase):
     def test_ejemplo (self):
-        return
+        # Asegurarse de que la carpeta testdata exista manualmente
+        self.assertTrue(os.path.exists("testdata"))  # <- no usamos os.mkdir()
 
+        estado: EstadoJuego = {
+            'filas': 2,
+            'columnas': 2,
+            'minas': 1,
+            'tablero': [[-1, 1], [1, 1]],
+            'tablero_visible': [[BANDERA, "1"], [VACIO, "1"]],
+            'juego_terminado': False
+        }
+
+        # Guardamos el estado
+        guardar_estado(estado, "testdata")
+
+        # Verificamos que los archivos fueron creados
+        self.assertTrue(os.path.exists(os.path.join("testdata", "tablero.txt")))
+        self.assertTrue(os.path.exists(os.path.join("testdata", "tablero_visible.txt")))
+
+        # Creamos nuevo estado vacío y lo cargamos desde el archivo
+        nuevo_estado: EstadoJuego = {}
+        resultado: bool = cargar_estado(nuevo_estado, "testdata")
+
+        # Verificamos que todo esté correcto
+        self.assertTrue(resultado)
+        self.assertEqual(nuevo_estado['filas'], 2)
+        self.assertEqual(nuevo_estado['columnas'], 2)
+        self.assertEqual(nuevo_estado['minas'], 1)
+        self.assertEqual(nuevo_estado['tablero'], estado['tablero'])
+        self.assertEqual(nuevo_estado['tablero_visible'], estado['tablero_visible'])
+        self.assertFalse(nuevo_estado['juego_terminado'])
+        
+
+# Test para cargar_estado
 class cargar_estadoTest(unittest.TestCase):
     def test_ejemplo (self):
-        return
+        
+        # Aseguramos que los archivos existen antes de cargar
+        self.assertTrue(os.path.exists(os.path.join("testdata", "tablero.txt")))
+        self.assertTrue(os.path.exists(os.path.join("testdata", "tablero_visible.txt")))
+
+        # Creamos un diccionario vacío para cargar el estado
+        estado_cargado: EstadoJuego = {}
+
+        # Ejecutamos la función y verificamos que devuelve True
+        resultado: bool = cargar_estado(estado_cargado, "testdata")
+        self.assertTrue(resultado)
+
+        # Verificamos que los datos cargados sean correctos
+        self.assertEqual(estado_cargado['filas'], 2)
+        self.assertEqual(estado_cargado['columnas'], 2)
+        self.assertEqual(estado_cargado['minas'], 1)
+        self.assertEqual(estado_cargado['tablero'], [[-1, 1], [1, 1]])
+        self.assertEqual(estado_cargado['tablero_visible'], [[BANDERA, "1"], [VACIO, "1"]])
+        self.assertFalse(estado_cargado['juego_terminado'])
 
 
 """
@@ -284,5 +386,7 @@ class cargar_estadoTest(unittest.TestCase):
 - Se debe cubrir al menos el 95% de ramas de cada función.
 """
 
+# Ejecutar todos los tests
 if __name__ == '__main__':
     unittest.main(verbosity=2)
+

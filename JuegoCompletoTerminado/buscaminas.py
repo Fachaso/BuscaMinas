@@ -17,6 +17,16 @@ def existe_archivo(ruta_directorio: str, nombre_archivo:str) -> bool:
 #Ejercicio 1:
 #Verifica que t sea una matriz valida(no vacía y filas de igual longitud):
 def es_matriz(t: list[list]) -> bool:
+    """
+    Verifica que t sea una matriz valida(no vacía y filas de igual longitud)
+
+    Args:
+        t (list[list]): Matriz bidimensional con minas 
+
+    Returns:
+        bool: Verdadero si es una matriz valida
+              False si no es una matriz valida
+    """
     #Verifica que no esta vacia
     if len(t) == 0 or len(t[0]) == 0:
         return False
@@ -29,19 +39,18 @@ def es_matriz(t: list[list]) -> bool:
 
 def colocar_minas(filas:int, columnas: int, minas:int) -> list[list[int]]:
     """
-    Genera una matriz de dimensiones filas x columnas con minas colocadas aleatoriamente.
-
-    Cada celda de la matriz es un entero: `-1` representa una mina y `0` representa una celda vacía sin minas adyacentes. 
-    La ubicación de las minas se selecciona de forma aleatoria y uniforme usando la biblioteca random.
+    Genera una matriz de dimensiones filas x columnas con minas colocadas aleatoriamente
+    Cada celda de la matriz es un entero (-1) que representa una mina y (0) que representa una celda vacia sin minas adyacentes
+    La ubicacion de las minas se selecciona de forma aleatoria y uniforme usando random
 
     Args:
-        filas (int): Cantidad de filas de la matriz. Debe ser mayor a 0.
-        columnas (int): Cantidad de columnas de la matriz. Debe ser mayor a 0.
-        minas (int): Cantidad total de minas a colocar. Debe ser mayor que 0 y menor que filas * columnas.
+        filas(int): Cantidad de filas de la matriz debe ser mayor a 0
+        columnas(int): Cantidad de columnas de la matriz debe ser mayor a 0
+        minas(int): Cantidad total de minas a colocar debe ser mayor que 0 y menor que filas * columnas
 
     Returns:
-        list[list[int]]: Matriz bidimensional con minas representadas como -1 y celdas vacías como 0.
-                         La matriz resultante cumple con las dimensiones solicitadas y contiene exactamente `minas` celdas con -1.
+        list[list[int]]: Matriz bidimensional con minas representadas como -1 y celdas vacias como 0
+                         La matriz resultante cumple con las dimensiones validas
     """
 #Crea una matriz llena de ceros 
     """  
@@ -79,7 +88,16 @@ def colocar_minas(filas:int, columnas: int, minas:int) -> list[list[int]]:
 #Esta función modifica un tablero de Buscaminas, calculando cuántas minas (-1) hay alrededor de cada celda vacía (0)
 def calcular_numeros(tablero: list[list[int]]) -> None:
     """
-    Primero debemos modificar directamente el tablero (inout), y no crear uno nuevo según la especificacion.
+    Se modifica las celdas vacias (0) asignandoles un valor y las minas (-1) no se modifican
+
+    Args:
+        tablero (list[list[int]]): Matriz del tablero con -1 como minas y 0 como celdas vacias
+
+    Modify: 
+        Se modifica el tablero en el lugar asignando en cada celda vacia (0) la cantidad de minas cercanas
+    """
+    """
+    Primero debemos modificar directamente el tablero (inout), y no crear uno nuevo según la especificacion
 
 El objetivo que vamos a hacer en cada celda que no es una mina (-1),es  reemplazar el 0 por la cantidad de minas adyacentes.
 
@@ -113,7 +131,6 @@ y asi con las demás posiciones.
 
 
 4) Recorremos cada celda y contamos las minas vecinas
-
 iteramos por cada índice de fila , desde 0 hasta cantidad_filas -1
 y por cada fila recorremos todas las columnas, hasta recorrer todo el tablero
 
@@ -127,9 +144,9 @@ Luego con el primer if analizamos las celdas que no son minas (-1) no se deben t
 	-calculamos la posición de la celda vecina con la formula:
 	(fila + desplazamiento_fila, columna + desplazamiento_columna)
 	
-	- con el siguiente if verificamos que la celda esta dentro del 	tablero.
+	- con el siguiente if verificamos que la celda esta dentro del tablero.
 	
-	-con el ultimo if , si la celda vecina es una mina, sumamos al      	contador.
+	-con el ultimo if , si la celda vecina es una mina, sumamos al contador.
 
 Por ultimo reemplazamos el 0 de la celda por el numero de minas que tiene alrededor.
 """
@@ -157,6 +174,17 @@ Por ultimo reemplazamos el 0 de la celda por el numero de minas que tiene alrede
 
 #Empieza Ejercicio 3:
 def crear_juego(filas:int, columnas:int, minas:int) -> EstadoJuego:
+    """
+    Crea un nuevo estado de juego con minas colocadas aleatoriamente por otras funciones como colocar_minas
+
+    Args:
+        filas(int): Numero de filas del tablero
+        columnas(int): Numero de columnas del tablero
+        minas(int): Cantidad de minas a colocar
+
+    Returns:
+        EstadoJuego(dict[str, Any]): Diccionario con el estado inicial del juego
+    """
     """
     1) vamos a crear el tablero con colocar_minas
 llamamos a la función colocar_minas,para tener el tablero con las minas colocadas.
@@ -238,6 +266,18 @@ return estado
 
 
 def estado_valido(estado: EstadoJuego) -> bool:
+    """
+    Verifica que el estado del juego sea valido
+    Comprueba estructura,cantidad correcta de minas, numeracion del tablero,
+    igualdad entre tablero y tablero_visible, y validez del estado final.
+
+    Args:
+        estado (EstadoJuego): Estado actual del juego
+
+    Returns:
+        bool: True si el estado es valido
+              False si el estado no es valido
+    """
     """
     1) El primer if verifica que el estado:
 	-tiene todas las claves necesarias y cada valor su tipo correcto
@@ -323,6 +363,17 @@ recorremos todas las celdas del tablero, y contamos los lugares que contienen (-
 
 def estructura_y_tipos_validos(estado: EstadoJuego) -> bool:
     """
+    Verifica que el estado tenga la estructura esperada y tipos correctos
+    Incluye validaciones de claves, dimensiones, tipos y valores permitidos en el tablero y el tablero visible
+
+    Args:
+        estado(EstadoJuego): Estado del juego
+
+    Returns:
+        bool: True si la estructura y tipos son validos
+              False si es lo contrario
+    """
+    """
     1) verificamos que existen todas las claves esperadas(las 6) de estado
 
 2) verificamos que sean números enteros positivos y que minas < filas x columnas
@@ -344,6 +395,7 @@ def estructura_y_tipos_validos(estado: EstadoJuego) -> bool:
     for clave in claves_esperadas:
         if clave not in estado:
             return False
+
     if len(estado) != 6:
         return False
 
@@ -398,6 +450,17 @@ def estructura_y_tipos_validos(estado: EstadoJuego) -> bool:
 # Chequeamos que 2 matrices t1 y t2 tengan , la misma forma, misma cantidad de filas y la misma cantidad de columnas en todas sus dilas
 # Utilizamos es_matriz del ejercicio 1
 def son_matriz_y_misma_dimension(t1: list[list[Any]], t2: list[list[Any]]) -> bool:
+    """
+    Verifica si dos matrices tienen la misma dimension y son validas
+
+    Args:
+        t1 (list[list[Any]]): Primera matriz
+        t2 (list[list[Any]]): Segunda matriz
+
+    Returns:
+        bool: True si ambas matrices tienen igual forma y son validas
+              False si no lo son
+    """
     # Verifica que t1 sea matriz válida o t2 sea matriz válida 
     # o que ambas tengan la misma cantidad de filas
     # o que las filas tengan la misma longitud
@@ -410,6 +473,17 @@ def son_matriz_y_misma_dimension(t1: list[list[Any]], t2: list[list[Any]]) -> bo
     return True
 
 def todas_celdas_seguras_descubiertas(tablero: list[list[int]], tablero_visible: list[list[str]]) -> bool:
+    """
+    Verifica si todas las celdas sin minas han sido descubiertas correctamente
+
+    Args:
+        tablero (list[list[int]]): Matriz con minas y numeros
+        tablero_visible (list[list[str]]): Matriz con lo que ve el jugador
+
+    Returns:
+        bool: True si todas las celdas seguras estan descubiertas
+              False en caso de que sea lo contrario
+    """
     """
     agrego todas_celdas_seguras_descubiertas
 
@@ -457,6 +531,12 @@ False si hay alguna celda segura sin descubrir
 #Ejercicio 4:
 def obtener_estado_tablero_visible(estado: EstadoJuego) -> list[list[str]]:
     """
+    Retorna una copia del tablero visible del estado de juego
+
+    Returns:
+        list[list[str]]: Copia del tablero visible actual
+    """
+    """
     Creamos una copia de tablero_visible, una nueva matriz con los mismos valores.
 
 1) accedemos a la matriz que queremos copiar 
@@ -481,8 +561,19 @@ Porque si devolvemos el mismo objeto, alguien desde afuera podría modificarlo, 
 
 #Ejercicio 5:
 def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
+    """
+    Alterna entre marcar o desmarcar una celda con una bandera
+    No hace nada si el juego termino o la celda ya fue descubierta
+
+    Args:
+        estado (EstadoJuego): Estado actual del juego
+        fila (int): Fila
+        columna (int): Columna 
+    Modify:
+        Modifica celdas visibles con BANDERA o VACIO
+    """
     # No hacemos nada si el juego terminó o la celda ya está descubierta
-    #Si el juergo ya termino o la celda ya esta descubierta(no es ni VACIO ni BANDERA) entonces no se modifica el tablero visible.
+    #Si el juego ya termino o la celda ya esta descubierta(no es ni VACIO ni BANDERA) entonces no se modifica el tablero visible.
 	        #-Si el juego termino no se puede modificar mas el tablero
 	        #-Si la celda ya fue descubierta no la podemos marcar***
     
@@ -504,6 +595,17 @@ def marcar_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 #Ejercicio 6:
 def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
     """
+    Descubre una celda y si es segura se expande automaticamente las celdas vecina
+    Si se descubre una mina el juego termina
+
+    Args:
+        estado (EstadoJuego): Estado actual del juego
+        fila(int): Fila 
+        columna(int): Columna 
+    Modify:
+        Modifica el estado del tablero visible y el estado del juego terminado
+    """
+    """
 1) si el juego esta terminado , no se puede descubrir mas nada
 
 
@@ -520,7 +622,7 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 
 6) El resto del estado no cambia , no modificamos nada mas.
     """
-    # Si el juego terminó, no se hace nada
+    # Si el juego termino, no se hace nada
     if estado["juego_terminado"]:
         return
 
@@ -538,8 +640,8 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
     for camino in caminos:
         for fila_camino, columna_camino in camino:
             if estado["tablero_visible"][fila_camino][columna_camino] != BANDERA:
-                numero: int = estado["tablero"][fila_camino][columna_camino]
-                estado["tablero_visible"][fila_camino][columna_camino] = str(numero)
+                numero:int = estado["tablero"][fila_camino][columna_camino]
+                estado["tablero_visible"][fila_camino][columna_camino] =str(numero)
     
     # Verificamos si todas las celdas seguras fueron descubiertas (¡victoria!)
     if todas_celdas_seguras_descubiertas(estado["tablero"], estado["tablero_visible"]):
@@ -549,8 +651,20 @@ def descubrir_celda(estado: EstadoJuego, fila: int, columna: int) -> None:
 
 def caminos_descubiertos(tablero: list[list[int]], tablero_visible: list[list[str]], f: int, c: int) -> list[list[tuple[int, int]]]:
     """
-    Esta función va a permitir que descubrir celda funcione correctamente, ya que determina que celdas deben ser reveladas automáticamente cuando el usuario descubre una celda con valor 0
+    Devuelve los caminos de celdas que deben revelarse al descubrir una celda segura
 
+    Args:
+        tablero(list[list[int]]): Tablero del juego
+        tablero_visible(list[list[str]]): Tablero visible para el jugador
+        f(int): Fila 
+        c(int): Columna 
+
+    Returns:
+        list[list[tuple[int, int]]]: Lista de caminos de celdas a descubrir
+    """
+    """
+    Esta función va a permitir que descubrir celda funcione correctamente, 
+    ya que determina que celdas deben ser reveladas automáticamente cuando el usuario descubre una celda con valor 0
 f, c: Z son las coordenadas donde comienza la expansión .
 : seq(seq(ZxZ)) devuelve una lista de caminos , cada camino son tuplas(i,j) que deben revelarse.
     """
@@ -636,12 +750,31 @@ f, c: Z son las coordenadas donde comienza la expansión .
 #Ejercicio 7:
 def verificar_victoria(estado: EstadoJuego) -> bool:
     """
+    Verifica si el jugador gano osea que todas las celdas seguras estan descubiertas
+
+    Args:
+        estado (EstadoJuego): Estado del juego
+
+    Returns:
+        bool: True si se gano
+              False si no gano
+    """
+    """
     El resultado de la función es True si y solo si TODAS las celdas sin minas han #sido descubiertas correctamente.
     """
     return todas_celdas_seguras_descubiertas(estado["tablero"], estado["tablero_visible"])
 
 #Ejercicio 8:
 def reiniciar_juego(estado: EstadoJuego) -> None:
+    """
+    Reinicia el juego manteniendo dimensiones y cantidad de minas ,pero con un nuevo tablero
+
+    Args:
+        estado (EstadoJuego): Estado del juego
+
+    Modify:
+        Modifica el estado (Estado del juego)
+    """
     """
     Con esta función vamos a reiniciar el juego manteniendo las dimensiones(filas, columnas) , 
     la cantidad de minas, pero vamos a cambiar el tablero y reiniciamos tablero_visible y juego_terminado
@@ -651,11 +784,14 @@ def reiniciar_juego(estado: EstadoJuego) -> None:
     filas: int = estado["filas"]
     columnas: int = estado["columnas"]
     minas: int = estado["minas"]
+    tablero_viejo: list[list[str]] = estado["tablero"]
 
 
     #Generamos un nuevo tablero con minas , agregando -1 donde hay minas y numeros del 0-8 en el resto.
     nuevo_tablero: list[list[int]] = colocar_minas(filas, columnas, minas)
-    calcular_numeros(nuevo_tablero)
+    while(tablero_viejo == nuevo_tablero):
+        nuevo_tablero = colocar_minas(filas, columnas, minas)
+        calcular_numeros(nuevo_tablero)
 
     # Generamos un tablero_visible VACIO, o sea lo llenamos con " " para que el jugador no vea nada aun 
     nuevo_tablero_visible: list[list[str]] = []
@@ -673,6 +809,16 @@ def reiniciar_juego(estado: EstadoJuego) -> None:
 
 #Ejercicio 9:
 def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
+    """
+    Guarda el estado actual del juego en archivos de texto 
+
+    Args:
+        estado (EstadoJuego): Estado del juego
+        ruta_directorio(str): Directorio donde se guardan los archivos
+
+    Modify:
+        Crea o sobrescribe archivos
+    """
     """
     Esta función guarda el estado actual del juego en dos archivos separados dentro del directorio xxxx para poder cargarlo mas tarde
 	-tablero.txt : guarda el estado["tablero"] 
@@ -741,6 +887,17 @@ def guardar_estado(estado: EstadoJuego, ruta_directorio: str) -> None:
 
 #Ejercicio 10:
 def cargar_estado(estado: EstadoJuego, ruta_directorio: str) -> bool:
+        """
+    Carga el estado del juego desde archivos del directorio dado
+
+    Args:
+        estado (EstadoJuego): Estado del juego 
+        ruta_directorio(str): Directorio donde se guardan los archivos
+
+    Returns:
+        bool: True si se cargo correctamente
+              False en caso de que se produzca un error
+    """
     #Verificamos la existencia de los archivos tablero.txt y tablero_visible.txt
     
         if not existe_archivo(ruta_directorio, "tablero.txt"):

@@ -417,6 +417,16 @@ class TestEstadoValido(unittest.TestCase):
             "juego_terminado": False
         }
         self.assertFalse(estado_valido(estado))
+        estado:EstadoJuego = {
+            "filas": 2,
+            "columnas": 2,
+            "minas": 4,
+            "tablero": [[-1, -1], [-1, -1]],
+            "tablero_visible": [["1", "?"], ["1", "1"]],
+            "juego_terminado": False
+        }
+        self.assertFalse(estado_valido(estado))
+
 
 class TestEstructuraYTiposValidos(unittest.TestCase):
     def test_estructura_y_tipos_validos_correcto(self):
@@ -440,6 +450,52 @@ class TestEstructuraYTiposValidos(unittest.TestCase):
             "juego_terminado": False
         }
         #self.assertFalse(estructura_y_tipos_validos(estado)) # da ERROR
+        estado:EstadoJuego = {
+            "filas": 2,
+            "dato_extra": 3,
+            "columnas": 2,
+            "minas": 1,
+            "tablero": [[-1, 1], [1, 1]],
+            "tablero_visible": [[BANDERA, "1"], ["1", "1"]],
+            "juego_terminado": True
+        }
+        self.assertFalse(estructura_y_tipos_validos(estado))
+        estado:EstadoJuego = {
+            "filas": 2,
+            "columnas": 2,
+            "minas": 1,
+            "tablero": [[-1, 9], [9, 1]],
+            "tablero_visible": [[BANDERA, "1"], ["1", "1"]],
+            "juego_terminado": True
+        }
+        self.assertFalse(estructura_y_tipos_validos(estado))
+        estado:EstadoJuego = {
+            "filas": 2,
+            "columnas": 2,
+            "minas": 1,
+            "tablero": [[-1, 1], [1, 1]],
+            "tablero_visible": [[BANDERA, "1"], ["1", "1"]],
+            "juego_terminado": 2
+        }
+        self.assertFalse(estructura_y_tipos_validos(estado))
+        estado:EstadoJuego = {
+            "filas": -1,
+            "columnas": 2,
+            "minas": 1,
+            "tablero": [[-1, 1], [1, 1]],
+            "tablero_visible": [[BANDERA, "1"], ["1", "1"]],
+            "juego_terminado": True
+        }
+        self.assertFalse(estructura_y_tipos_validos(estado))
+        estado:EstadoJuego = {
+            "filas": 2,
+            "columnas": -1,
+            "minas": 1,
+            "tablero": [[-1, 1], [1, 1]],
+            "tablero_visible": [[BANDERA, "1"], ["1", "1"]],
+            "juego_terminado": True
+        }
+        self.assertFalse(estructura_y_tipos_validos(estado))     
         
     def test_son_matriz_y_misma_dimension_true(self):
         matriz_v1:list[list[int]] = [[1, 2], [3, 4]]
@@ -950,6 +1006,7 @@ class TestCargarEstado(unittest.TestCase):
         borrar_archivos()
 
 # Tarea: Pensar cómo testear  guardar_estado y cargar_estado
+# Las puse arribe
 
 """
 - Agregar varios casos de prueba para cada función.
